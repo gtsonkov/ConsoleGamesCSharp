@@ -1,0 +1,11 @@
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Tetris\Tetris\bin\Debug\netcoreapp2.2\Tetris.deps.json
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Tetris\Tetris\bin\Debug\netcoreapp2.2\Tetris.runtimeconfig.json
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Tetris\Tetris\bin\Debug\netcoreapp2.2\Tetris.runtimeconfig.dev.json
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Tetris\Tetris\bin\Debug\netcoreapp2.2\Tetris.dll
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Tetris\Tetris\bin\Debug\netcoreapp2.2\Tetris.pdb
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Tetris\Tetris\obj\Debug\netcoreapp2.2\Tetris.csprojAssemblyReference.cache
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Tetris\Tetris\obj\Debug\netcoreapp2.2\Tetris.csproj.CoreCompileInputs.cache
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Tetris\Tetris\obj\Debug\netcoreapp2.2\Tetris.AssemblyInfoInputs.cache
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Tetris\Tetris\obj\Debug\netcoreapp2.2\Tetris.AssemblyInfo.cs
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Tetris\Tetris\obj\Debug\netcoreapp2.2\Tetris.dll
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Tetris\Tetris\obj\Debug\netcoreapp2.2\Tetris.pdb
