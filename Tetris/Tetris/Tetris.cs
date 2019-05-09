@@ -6,6 +6,8 @@ namespace Tetris
     using System.Threading;
     class Tetris
     {
+        //Call Ramndom Class
+        static Random RandomGenerator = new Random();
         // Settings
         static int HeaderRows = 1;
         static int FooterRows = 1;
@@ -17,9 +19,8 @@ namespace Tetris
         static int ConsoleCols = BorederCols + TetrisCols + InfoCols;
         static int Frame = 40; // (1000/24)= 41,6666 = 40ms (25fps HumanEye)
         static int Frames = 0;
-        static int CurrentFigurIndex = 2;
+        static int FigureIndex = 0; //TODO: Random
         static int FramesToMove = 20; //Frames to move (Frames * MoveSpeed)
-        static int MoveSpeed = FramesToMove * Frame;
         static List<bool[,]> TetrisFigures = new List<bool[,]>(7)
             {
             new bool[,] //I
@@ -63,6 +64,7 @@ namespace Tetris
         static int CurrentFigureRow = 0;
         static int CurrentFigureCol = 0;
         static bool[,] Field = new bool[TetrisRows,TetrisCols];
+        static bool[,] CurrentFigure = TetrisFigures[FigureIndex];
         static void Main(string[] args)
         {
             Console.Title = "Tetris Game";
@@ -73,8 +75,11 @@ namespace Tetris
             Console.CursorVisible = false;
             DrawBorder();
             Drawinfo();
+            FigureIndex = GetRandomIndex();
+            CurrentFigure = TetrisFigures[FigureIndex];
             while (true)
             {
+                Frames++;
                 //User Input
                 if (Console.KeyAvailable)
                 {
@@ -85,13 +90,18 @@ namespace Tetris
                     }
                     else if ((key.Key == ConsoleKey.LeftArrow) || (key.Key == ConsoleKey.A))
                     {
-                        //TODO: Move current figur left
-                        CurrentFigureCol--; // TODO: Check out of range
+                        if (CurrentFigureCol>=1)
+                        {
+                            CurrentFigureCol--;
+                        }
+                        
                     }
                     else if ((key.Key == ConsoleKey.RightArrow) || (key.Key == ConsoleKey.D))
                     {
-                        //TODO: Move current figur right
-                        CurrentFigureCol++; // TODO: Check out of range
+                        if (CurrentFigureCol<TetrisCols-CurrentFigure.GetLength(1))
+                        {
+                            CurrentFigureCol++;
+                        }
                     }
                     else if ((key.Key == ConsoleKey.Spacebar) || (key.Key == ConsoleKey.UpArrow) || (key.Key == ConsoleKey.W))
                     {
@@ -99,16 +109,15 @@ namespace Tetris
                     }
                     else if ((key.Key == ConsoleKey.DownArrow) || (key.Key == ConsoleKey.S))
                     {
-                        //TODO: Move current figur down and Score++ 
                         Frames = 1;
                         CurrentFigureRow++;
+                        Score++;
                     }
                 }
 
                 //Change Game State
                 if (Frames%FramesToMove==0)
                 {
-                    //Move current figure
                     Frames = 0;
                     //Score++;
                     CurrentFigureRow++;
@@ -116,9 +125,14 @@ namespace Tetris
                 DrawBorder();
                 Drawinfo();
                 DworCurrentFigur();
-                Frames++;
                 Thread.Sleep(Frame);
             }
+        }
+
+        static int GetRandomIndex()
+        {
+            int RandomIndex = RandomGenerator.Next(-1, 7);
+            return RandomIndex;
         }
 
         //Write whit exact parameters
@@ -160,10 +174,11 @@ namespace Tetris
             Write(Score.ToString(), 2, 3+TetrisCols);
             Write("Frame:", 4, 3 + TetrisCols);
             Write(Frames.ToString(), 5, 3 + TetrisCols);
+            Write("Position:",7, 3 + TetrisCols);
+            Write(CurrentFigureRow + "," + CurrentFigureCol, 8, 3 + TetrisCols);
         }
         static void DworCurrentFigur()
         {
-            var CurrentFigure = TetrisFigures[CurrentFigurIndex];
             for (int row = 0; row < CurrentFigure.GetLength(0); row++)
             {
                 for (int col = 0; col < CurrentFigure.GetLength(1); col++)
@@ -175,5 +190,6 @@ namespace Tetris
                 }
             }
         }
+
     }
 }
