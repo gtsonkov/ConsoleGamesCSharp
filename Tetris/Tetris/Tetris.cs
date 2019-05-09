@@ -14,10 +14,16 @@ namespace Tetris
         static int InfoCols = 10;
         static int ConsoleRows = HeaderRows + TetrisRows + FooterRows;
         static int ConsoleCols = BorederCols + TetrisCols + InfoCols;
-        static int SleepTime = 40; // (1000/24)= 41,6666 = 40ms (25fps HumanEye)
+        static int Frame = 40; // (1000/24)= 41,6666 = 40ms (25fps HumanEye)
+        static int Frames = 0;
+        static int FramesToMove = 20; //Frames to move (Frames * MoveSpeed)
+        static int MoveSpeed = FramesToMove * Frame;
 
         //State Info
         static int Score = 0;
+        static int CurrentFigureRow = 0;
+        static int CurrentFigureCol = 0;
+        static bool[,] Field = new bool[TetrisRows,TetrisCols];
         static void Main(string[] args)
         {
             Console.Title = "Tetris Game";
@@ -38,12 +44,37 @@ namespace Tetris
                     {
                         return;
                     }
+                    else if ((key.Key == ConsoleKey.LeftArrow) || (key.Key == ConsoleKey.A))
+                    {
+                        //TODO: Move current figur left
+                        CurrentFigureCol--; // TODO: Check out of range
+                    }
+                    else if ((key.Key == ConsoleKey.RightArrow) || (key.Key == ConsoleKey.D))
+                    {
+                        //TODO: Move current figur right
+                        CurrentFigureCol++; // TODO: Check out of range
+                    }
+                    else if ((key.Key == ConsoleKey.Spacebar) || (key.Key == ConsoleKey.UpArrow) || (key.Key == ConsoleKey.W))
+                    {
+                        //TODO: Rotate current figur (90 degree)
+                    }
+                    else if ((key.Key == ConsoleKey.DownArrow) || (key.Key == ConsoleKey.S))
+                    {
+                        //TODO: Move current figur down and Score++ 
+                        Frame = 1;
+                    }
                 }
 
-                //Change State
-                Score++;
+                //Change Game State
+                if (Frames%FramesToMove==0)
+                {
+                    //Move current figure
+                    Frames = 0;
+                    Score++;
+                }
                 Drawnfo();
-                Thread.Sleep(SleepTime);
+                Frames++;
+                Thread.Sleep(Frame);
             }
         }
 
@@ -84,6 +115,8 @@ namespace Tetris
         {
             Write("Score:", 1, 3 + TetrisCols);
             Write(Score.ToString(), 2, 3+TetrisCols);
+            Write("Frame:", 4, 3 + TetrisCols);
+            Write(Frames.ToString(), 5, 3 + TetrisCols);
         }
     }
 }
