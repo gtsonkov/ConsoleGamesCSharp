@@ -114,9 +114,9 @@ namespace Tetris
                     }
                     else if (((key.Key == ConsoleKey.DownArrow) || (key.Key == ConsoleKey.S)) && (!(Collision())))
                     {
-                        Frames = 1;
-                        CurrentFigureRow++;
-                        Score++;
+                            Frames = 1;
+                            CurrentFigureRow++;
+                            Score++;
                     }
                 }
 
@@ -137,6 +137,13 @@ namespace Tetris
                         CurrentFigureCol = 0;
                         if (Collision())
                         {
+                            var StringScore = Score.ToString();
+                            StringScore += new string(' ', 7 - StringScore.Length);
+                            Write("╔═════════╗", 5, 5);
+                            Write("║ Game    ║", 6, 5);
+                            Write("║   Over! ║", 7, 5);
+                            Write($"║ {StringScore} ║", 8, 5);
+                            Write("╚═════════╝", 9, 5);
                             break;
                         }
                     }
@@ -147,11 +154,15 @@ namespace Tetris
                 DrawCurrentFigure();
                 Thread.Sleep(Frame);
             }
-            DrawBorder();
-            DrawInfo();
-            DrawField();
-            DrawCurrentFigure();
-            Write("Game Over", 10, 3);
+            Write("Press Esc to exit", 18, 3,ConsoleColor.Red);
+            while (true)
+            {
+                var key = Console.ReadKey();
+                if (key.Key == ConsoleKey.Escape)
+                {
+                    return;
+                }
+            }
         }
 
         static void AddCurrentFigureToField()
