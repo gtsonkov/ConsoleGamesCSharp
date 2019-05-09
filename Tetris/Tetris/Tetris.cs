@@ -2,6 +2,7 @@
 
 namespace Tetris
 {
+    using System.Collections.Generic;
     using System.Threading;
     class Tetris
     {
@@ -18,6 +19,43 @@ namespace Tetris
         static int Frames = 0;
         static int FramesToMove = 20; //Frames to move (Frames * MoveSpeed)
         static int MoveSpeed = FramesToMove * Frame;
+        static List<bool[,]> TetrisFigures = new List<bool[,]>(7)
+            {
+            new bool[,] //I
+            { 
+                {true,true,true,true}
+            },
+            new bool[,] //O
+            {
+                {true,true},
+                {true,true}
+            },
+            new bool[,] //T
+            {
+                {false,true,false},
+                {true,true,true}
+            },
+            new bool[,] //S
+            {
+                {false,true,true},
+                {true,true,false}
+            },
+            new bool[,] //Z
+            {
+                {true,true,false},
+                {false,true,true}
+            },
+            new bool[,] //J
+            {
+                {true,false,false},
+                {true,true,true}
+            },
+            new bool[,] //L
+            {
+                {true,true,true},
+                {false,false,true}
+            },
+        };
 
         //State Info
         static int Score = 0;
