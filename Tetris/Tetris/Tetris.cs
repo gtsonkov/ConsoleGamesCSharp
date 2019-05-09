@@ -17,6 +17,7 @@ namespace Tetris
         static int ConsoleCols = BorederCols + TetrisCols + InfoCols;
         static int Frame = 40; // (1000/24)= 41,6666 = 40ms (25fps HumanEye)
         static int Frames = 0;
+        static int CurrentFigurIndex = 2;
         static int FramesToMove = 20; //Frames to move (Frames * MoveSpeed)
         static int MoveSpeed = FramesToMove * Frame;
         static List<bool[,]> TetrisFigures = new List<bool[,]>(7)
@@ -71,7 +72,7 @@ namespace Tetris
             Console.BufferWidth = ConsoleCols;
             Console.CursorVisible = false;
             DrawBorder();
-            Drawnfo();
+            Drawinfo();
             while (true)
             {
                 //User Input
@@ -99,7 +100,8 @@ namespace Tetris
                     else if ((key.Key == ConsoleKey.DownArrow) || (key.Key == ConsoleKey.S))
                     {
                         //TODO: Move current figur down and Score++ 
-                        Frame = 1;
+                        Frames = 1;
+                        CurrentFigureRow++;
                     }
                 }
 
@@ -108,9 +110,12 @@ namespace Tetris
                 {
                     //Move current figure
                     Frames = 0;
-                    Score++;
+                    //Score++;
+                    CurrentFigureRow++;
                 }
-                Drawnfo();
+                DrawBorder();
+                Drawinfo();
+                DworCurrentFigur();
                 Frames++;
                 Thread.Sleep(Frame);
             }
@@ -149,12 +154,26 @@ namespace Tetris
             Endline += "╝";
             Console.WriteLine(Endline);
         }
-        static void Drawnfo()
+        static void Drawinfo()
         {
             Write("Score:", 1, 3 + TetrisCols);
             Write(Score.ToString(), 2, 3+TetrisCols);
             Write("Frame:", 4, 3 + TetrisCols);
             Write(Frames.ToString(), 5, 3 + TetrisCols);
+        }
+        static void DworCurrentFigur()
+        {
+            var CurrentFigure = TetrisFigures[CurrentFigurIndex];
+            for (int row = 0; row < CurrentFigure.GetLength(0); row++)
+            {
+                for (int col = 0; col < CurrentFigure.GetLength(1); col++)
+                {
+                    if (CurrentFigure[row,col])
+                    {
+                        Write("*", row + 1 + CurrentFigureRow, col + 1 + CurrentFigureCol);
+                    }
+                }
+            }
         }
     }
 }
