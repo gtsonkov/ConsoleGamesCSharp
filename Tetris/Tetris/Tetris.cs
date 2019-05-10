@@ -178,7 +178,7 @@ namespace Tetris
                 DrawCurrentFigure();
                 Thread.Sleep(Frame);
             }
-            Write("Press Esc to exit", 18, 3, ConsoleColor.Red);
+            Write("Press Esc to exit", 18, 3);
             while (true)
             {
                 var key = Console.ReadKey();
@@ -240,12 +240,10 @@ namespace Tetris
         }
 
         //Write whit exact parameters
-        static void Write(string text, int row, int col, ConsoleColor color = ConsoleColor.White)
+        static void Write(string text, int row, int col)
         {
-            Console.ForegroundColor = color;
             Console.SetCursorPosition(col, row);
             Console.Write(text);
-            Console.ResetColor();
         }
         static void DrawBorder()
         {
