@@ -22,7 +22,8 @@ namespace Tetris
         static int Frame = 40; // (1000/24)= 41,6666 = 40ms (25fps HumanEye)
         static int Frames = 0;
         static int FigureIndex = 0;
-        static int FramesToMove = 20; //Frames to move (Frames * MoveSpeed)
+        static int FramesToMove = 15; //Frames to move (Frames * MoveSpeed)
+        static int[] ScorePerLines = { 0, 40, 100, 300, 1200 };
         static List<bool[,]> TetrisFigures = new List<bool[,]>(7)
             {
             new bool[,] //I
@@ -70,14 +71,14 @@ namespace Tetris
         static bool[,] CurrentFigure = TetrisFigures[FigureIndex];
         static void Main(string[] args)
         {
-            
+
             if (File.Exists("HighscoresTetris.txt"))
             {
                 var allScores = File.ReadAllLines("HighscoresTetris.txt");
                 foreach (var item in allScores)
                 {
-                   var ScoreMatch = Regex.Match(item, @"=> (?<score>[0-9]+)");
-                   HighScore = Math.Max(HighScore, int.Parse(ScoreMatch.Groups["score"].Value));
+                    var ScoreMatch = Regex.Match(item, @"=> (?<score>[0-9]+)");
+                    HighScore = Math.Max(HighScore, int.Parse(ScoreMatch.Groups["score"].Value));
                 }
             }
             Console.Title = "Tetris Game";
@@ -101,7 +102,7 @@ namespace Tetris
                     {
                         return;
                     }
-                    else if ((key.Key == ConsoleKey.LeftArrow) || (key.Key == ConsoleKey.A))
+                    else if (((key.Key == ConsoleKey.LeftArrow) || (key.Key == ConsoleKey.A)) && !(Collision()))
                     {
                         if (CurrentFigureCol >= 1)
                         {
@@ -111,7 +112,7 @@ namespace Tetris
                             }
                         }
                     }
-                    else if ((key.Key == ConsoleKey.RightArrow) || (key.Key == ConsoleKey.D))
+                    else if (((key.Key == ConsoleKey.RightArrow) || (key.Key == ConsoleKey.D)) && !(Collision()))
                     {
                         if (CurrentFigureCol < TetrisCols - CurrentFigure.GetLength(1))
                         {
@@ -127,9 +128,9 @@ namespace Tetris
                     }
                     else if (((key.Key == ConsoleKey.DownArrow) || (key.Key == ConsoleKey.S)) && (!(Collision())))
                     {
-                            Frames = 1;
-                            CurrentFigureRow++;
-                            Score++;
+                        Frames = 1;
+                        CurrentFigureRow++;
+                        Score++;
                     }
                 }
 
@@ -144,12 +145,18 @@ namespace Tetris
                     else
                     {
                         AddCurrentFigureToField();
+                        int lines = ChekForFullLines();
+                        Score += ScorePerLines[lines];
                         FigureIndex = GetRandomIndex();
                         CurrentFigure = TetrisFigures[FigureIndex];
                         CurrentFigureRow = 0;
                         CurrentFigureCol = 0;
                         if (Collision())
                         {
+                            DrawBorder();
+                            DrawInfo();
+                            DrawField();
+                            DrawCurrentFigure();
                             File.AppendAllLines("HighscoresTetris.txt", new List<string>
                             {
                                 $"[{DateTime.Now.ToLongTimeString()}] - {Environment.UserName} => {Score}"
@@ -171,7 +178,7 @@ namespace Tetris
                 DrawCurrentFigure();
                 Thread.Sleep(Frame);
             }
-            Write("Press Esc to exit", 18, 3,ConsoleColor.Red);
+            Write("Press Esc to exit", 18, 3, ConsoleColor.Red);
             while (true)
             {
                 var key = Console.ReadKey();
@@ -182,18 +189,44 @@ namespace Tetris
             }
         }
 
+        static int ChekForFullLines()
+        {
+            int lines = 0;
+            for (int row = 0; row < Field.GetLength(0); row++)
+            {
+                bool rowIsFull = true;
+                for (int col = 0; col < Field.GetLongLength(1); col++)
+                {
+                    if (Field[row, col] == false)
+                    {
+                        rowIsFull = false;
+                        break;
+                    }
+                }
+                if (rowIsFull)
+                {
+                    for (int rowToMove = row; rowToMove >= 1; rowToMove--)
+                    {
+                        for (int col = 0; col < Field.GetLength(1); col++)
+                        {
+                            Field[rowToMove, col] = Field[rowToMove - 1, col];
+                        }
+                    }
+                    lines++;
+                }
+            }
+            return lines;
+        }
+
         static void AddCurrentFigureToField()
         {
             for (int row = 0; row < CurrentFigure.GetLength(0); row++)
             {
                 for (int col = 0; col < CurrentFigure.GetLength(1); col++)
                 {
-                    if (true)
+                    if (CurrentFigure[row, col])
                     {
-                        if (CurrentFigure[row, col])
-                        {
-                            Field[CurrentFigureRow + row, CurrentFigureCol + col] = true;
-                        }
+                        Field[CurrentFigureRow + row, CurrentFigureCol + col] = true;
                     }
                 }
             }
@@ -247,7 +280,11 @@ namespace Tetris
             Write(Frames.ToString(), 5, 3 + TetrisCols);
             Write("Position:", 7, 3 + TetrisCols);
             Write(CurrentFigureRow + "," + CurrentFigureCol, 8, 3 + TetrisCols);
-            Write("High score", 9, 3 + TetrisCols);
+            if (Score > HighScore)
+            {
+                HighScore = Score;
+            }
+            Write("Best", 9, 3 + TetrisCols);
             Write($"{HighScore}", 10, 3 + TetrisCols);
         }
         static void DrawCurrentFigure()
