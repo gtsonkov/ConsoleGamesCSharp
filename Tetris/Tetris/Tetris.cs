@@ -4,6 +4,7 @@ namespace Tetris
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.Text.RegularExpressions;
     using System.Threading;
     class Tetris
     {
@@ -62,12 +63,23 @@ namespace Tetris
 
         //State Info
         static int Score = 0;
+        static int HighScore = 0;
         static int CurrentFigureRow = 0;
         static int CurrentFigureCol = 0;
         static bool[,] Field = new bool[TetrisRows, TetrisCols];
         static bool[,] CurrentFigure = TetrisFigures[FigureIndex];
         static void Main(string[] args)
         {
+            
+            if (File.Exists("HighscoresTetris.txt"))
+            {
+                var allScores = File.ReadAllLines("HighscoresTetris.txt");
+                foreach (var item in allScores)
+                {
+                   var ScoreMatch = Regex.Match(item, @"=> (?<score>[0-9]+)");
+                   HighScore = Math.Max(HighScore, int.Parse(ScoreMatch.Groups["score"].Value));
+                }
+            }
             Console.Title = "Tetris Game";
             Console.WindowHeight = ConsoleRows + 1;
             Console.WindowWidth = ConsoleCols;
@@ -235,6 +247,8 @@ namespace Tetris
             Write(Frames.ToString(), 5, 3 + TetrisCols);
             Write("Position:", 7, 3 + TetrisCols);
             Write(CurrentFigureRow + "," + CurrentFigureCol, 8, 3 + TetrisCols);
+            Write("High score", 9, 3 + TetrisCols);
+            Write($"{HighScore}", 10, 3 + TetrisCols);
         }
         static void DrawCurrentFigure()
         {
