@@ -4,6 +4,7 @@ namespace Tetris
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading;
     class Tetris
@@ -65,8 +66,8 @@ namespace Tetris
         //State Info
         static int Score = 0;
         static int HighScore = 0;
-        static int CurrentFigureRow = 0;
-        static int CurrentFigureCol = 0;
+        static int CurrentRow = 0;
+        static int CurrentCol = 0;
         static bool[,] Field = new bool[TetrisRows, TetrisCols];
         static bool[,] CurrentFigure = TetrisFigures[FigureIndex];
         static void Main(string[] args)
@@ -102,34 +103,35 @@ namespace Tetris
                     {
                         return;
                     }
-                    else if (((key.Key == ConsoleKey.LeftArrow) || (key.Key == ConsoleKey.A)) && !(Collision()))
+                    else if (((key.Key == ConsoleKey.LeftArrow) || (key.Key == ConsoleKey.A)) && !(Collision(CurrentFigure)))
                     {
-                        if (CurrentFigureCol >= 1)
+                        if (CurrentCol >= 1)
                         {
-                            if (!CollisionLeft())
+                            if (!CollisionLeft(CurrentFigure))
                             {
-                                CurrentFigureCol--;
+                                CurrentCol--;
                             }
                         }
                     }
-                    else if (((key.Key == ConsoleKey.RightArrow) || (key.Key == ConsoleKey.D)) && !(Collision()))
+                    else if (((key.Key == ConsoleKey.RightArrow) || (key.Key == ConsoleKey.D)) && !(Collision(CurrentFigure)))
                     {
-                        if (CurrentFigureCol < TetrisCols - CurrentFigure.GetLength(1))
+                        if (CurrentCol < TetrisCols - CurrentFigure.GetLength(1))
                         {
-                            if (!CollisionRight())
+                            if (!CollisionRight(CurrentFigure))
                             {
-                                CurrentFigureCol++;
+                                CurrentCol++;
                             }
                         }
                     }
                     else if ((key.Key == ConsoleKey.Spacebar) || (key.Key == ConsoleKey.UpArrow) || (key.Key == ConsoleKey.W))
                     {
-                        //TODO: Rotate current figur (90 degree)
+                        RotateCurrentFigure();
+                        //TODO: Collision check bei rotating
                     }
-                    else if (((key.Key == ConsoleKey.DownArrow) || (key.Key == ConsoleKey.S)) && (!(Collision())))
+                    else if (((key.Key == ConsoleKey.DownArrow) || (key.Key == ConsoleKey.S)) && (!Collision(CurrentFigure)))
                     {
                         Frames = 1;
-                        CurrentFigureRow++;
+                        CurrentRow++;
                         Score++;
                     }
                 }
@@ -138,9 +140,9 @@ namespace Tetris
                 if (Frames % FramesToMove == 0)
                 {
                     Frames = 0;
-                    if (!(Collision()))
+                    if (!(Collision(CurrentFigure)))
                     {
-                        CurrentFigureRow++;
+                        CurrentRow++;
                     }
                     else
                     {
@@ -149,9 +151,9 @@ namespace Tetris
                         Score += ScorePerLines[lines];
                         FigureIndex = GetRandomIndex();
                         CurrentFigure = TetrisFigures[FigureIndex];
-                        CurrentFigureRow = 0;
-                        CurrentFigureCol = 0;
-                        if (Collision())
+                        CurrentRow = 0;
+                        CurrentCol = 0;
+                        if (Collision(CurrentFigure))
                         {
                             DrawBorder();
                             DrawInfo();
@@ -189,6 +191,21 @@ namespace Tetris
             }
         }
 
+        static void RotateCurrentFigure()
+        {
+            var NewFigure = new bool[CurrentFigure.GetLength(1), CurrentFigure.GetLength(0)];
+            for (int row = 0; row < CurrentFigure.GetLength(0); row++)
+            {
+                for (int col = 0; col < CurrentFigure.GetLength(1); col++)
+                {
+                    NewFigure[col, CurrentFigure.GetLength(0) - row - 1] = CurrentFigure[row, col];
+                }
+            }
+            if (!Collision(NewFigure))
+            {
+                CurrentFigure = NewFigure;
+            }
+        }
         static int ChekForFullLines()
         {
             int lines = 0;
@@ -217,7 +234,6 @@ namespace Tetris
             }
             return lines;
         }
-
         static void AddCurrentFigureToField()
         {
             for (int row = 0; row < CurrentFigure.GetLength(0); row++)
@@ -226,19 +242,17 @@ namespace Tetris
                 {
                     if (CurrentFigure[row, col])
                     {
-                        Field[CurrentFigureRow + row, CurrentFigureCol + col] = true;
+                        Field[CurrentRow + row, CurrentCol + col] = true;
                     }
                 }
             }
         }
-
         //Get Random Index
         static int GetRandomIndex()
         {
             int RandomIndex = RandomGenerator.Next(0, 6);
             return RandomIndex;
         }
-
         //Write whit exact parameters
         static void Write(string text, int row, int col)
         {
@@ -277,7 +291,7 @@ namespace Tetris
             Write("Frame:", 4, 3 + TetrisCols);
             Write(Frames.ToString(), 5, 3 + TetrisCols);
             Write("Position:", 7, 3 + TetrisCols);
-            Write(CurrentFigureRow + "," + CurrentFigureCol, 8, 3 + TetrisCols);
+            Write(CurrentRow + "," + CurrentCol, 8, 3 + TetrisCols);
             if (Score > HighScore)
             {
                 HighScore = Score;
@@ -289,11 +303,12 @@ namespace Tetris
         {
             for (int row = 0; row < CurrentFigure.GetLength(0); row++)
             {
+                StringBuilder line = new StringBuilder();
                 for (int col = 0; col < CurrentFigure.GetLength(1); col++)
                 {
                     if (CurrentFigure[row, col])
                     {
-                        Write("*", row + 1 + CurrentFigureRow, col + 1 + CurrentFigureCol);
+                        Write("*", row + 1 + CurrentRow, col + 1 + CurrentCol);
                     }
                 }
             }
@@ -302,27 +317,57 @@ namespace Tetris
         {
             for (int row = 0; row < Field.GetLength(0); row++)
             {
+                StringBuilder line = new StringBuilder();
                 for (int col = 0; col < Field.GetLength(1); col++)
                 {
                     if (Field[row, col])
                     {
-                        Write("*", row + 1, col + 1);
+                        line.Append("*");
+                    }
+                    else
+                    {
+                        line.Append(" ");
                     }
                 }
+                Write(line.ToString(), row + 1, 1);
             }
         }
-        static bool Collision()
+        static bool Collision(bool[,] figure)
         {
-            //TODO: Colide with existing figures
-            if (CurrentFigureRow + CurrentFigure.GetLength(0) == TetrisRows)
+            var FigureLowestRow = CurrentRow + figure.GetLength(0);
+            if (FigureLowestRow > TetrisRows)
             {
                 return true;
             }
-            for (int row = 0; row < CurrentFigure.GetLength(0); row++)
+            
+            if (CurrentCol > TetrisCols - figure.GetLength(1))
             {
-                for (int col = 0; col < CurrentFigure.GetLongLength(1); col++)
+                return true;
+            }
+            if (CurrentRow + figure.GetLength(0) == TetrisRows)
+            {
+                return true;
+            }
+            for (int row = 0; row < figure.GetLength(0); row++)
+            {
+                for (int col = 0; col < figure.GetLongLength(1); col++)
                 {
-                    if (CurrentFigure[row, col] && Field[CurrentFigureRow + row + 1, CurrentFigureCol + col])
+                    if (figure[row, col] && Field[CurrentRow + row + 1, CurrentCol + col])
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+        static bool CollisionLeft(bool[,] figure)
+        {
+            for (int row = 0; row < figure.GetLength(0); row++)
+            {
+                for (int col = 0; col < figure.GetLongLength(1); col++)
+                {
+                    if (figure[row, col] && Field[CurrentRow + row, CurrentCol + col - 1])
                     {
                         return true;
                     }
@@ -330,27 +375,13 @@ namespace Tetris
             }
             return false;
         }
-        static bool CollisionLeft()
+        static bool CollisionRight(bool[,] figure)
         {
-            for (int row = 0; row < CurrentFigure.GetLength(0); row++)
+            for (int row = 0; row < figure.GetLength(0); row++)
             {
-                for (int col = 0; col < CurrentFigure.GetLongLength(1); col++)
+                for (int col = 0; col < figure.GetLongLength(1); col++)
                 {
-                    if (CurrentFigure[row, col] && Field[CurrentFigureRow + row, CurrentFigureCol + col - 1])
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        static bool CollisionRight()
-        {
-            for (int row = 0; row < CurrentFigure.GetLength(0); row++)
-            {
-                for (int col = 0; col < CurrentFigure.GetLongLength(1); col++)
-                {
-                    if (CurrentFigure[row, col] && Field[CurrentFigureRow + row, CurrentFigureCol + col + 1])
+                    if (figure[row, col] && Field[CurrentRow + row, CurrentCol + col + 1])
                     {
                         return true;
                     }
