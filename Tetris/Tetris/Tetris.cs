@@ -3,6 +3,7 @@
 namespace Tetris
 {
     using System.Collections.Generic;
+    using System.IO;
     using System.Threading;
     class Tetris
     {
@@ -137,6 +138,10 @@ namespace Tetris
                         CurrentFigureCol = 0;
                         if (Collision())
                         {
+                            File.AppendAllLines("HighscoresTetris.txt", new List<string>
+                            {
+                                $"[{DateTime.Now.ToLongTimeString()}] - {Environment.UserName} => {Score}"
+                            });
                             var StringScore = Score.ToString();
                             StringScore += new string(' ', 7 - StringScore.Length);
                             Write("╔═════════╗", 5, 5);
