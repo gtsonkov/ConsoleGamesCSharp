@@ -18,12 +18,13 @@ namespace Tetris
         static int BorederCols = 3;
         static int TetrisCols = 10;
         static int InfoCols = 10;
+        static long Level = 1;
         static int ConsoleRows = HeaderRows + TetrisRows + FooterRows;
         static int ConsoleCols = BorederCols + TetrisCols + InfoCols;
         static int Frame = 40; // (1000/24)= 41,6666 = 40ms (25fps HumanEye)
         static int Frames = 0;
         static int FigureIndex = 0;
-        static int FramesToMove = 15; //Frames to move (Frames * MoveSpeed)
+        static int FramesToMove = 16; //Frames to move (Frames * MoveSpeed)
         static int[] ScorePerLines = { 0, 40, 100, 300, 1200 };
         static List<bool[,]> TetrisFigures = new List<bool[,]>(7)
             {
@@ -95,12 +96,15 @@ namespace Tetris
             while (true)
             {
                 Frames++;
+                //Update Level
+                UpdateLevel();
                 //User Input
                 if (Console.KeyAvailable)
                 {
                     var key = Console.ReadKey();
                     if (key.Key == ConsoleKey.Escape)
                     {
+                        GameOver();
                         return;
                     }
                     else if (((key.Key == ConsoleKey.LeftArrow) || (key.Key == ConsoleKey.A)) && !(Collision(CurrentFigure)))
@@ -126,7 +130,6 @@ namespace Tetris
                     else if ((key.Key == ConsoleKey.Spacebar) || (key.Key == ConsoleKey.UpArrow) || (key.Key == ConsoleKey.W))
                     {
                         RotateCurrentFigure();
-                        //TODO: Collision check bei rotating
                     }
                     else if (((key.Key == ConsoleKey.DownArrow) || (key.Key == ConsoleKey.S)) && (!Collision(CurrentFigure)))
                     {
@@ -137,7 +140,7 @@ namespace Tetris
                 }
 
                 //Change Game State
-                if (Frames % FramesToMove == 0)
+                if (Frames % (FramesToMove - Level) == 0)
                 {
                     Frames = 0;
                     if (!(Collision(CurrentFigure)))
@@ -155,21 +158,7 @@ namespace Tetris
                         CurrentCol = 0;
                         if (Collision(CurrentFigure))
                         {
-                            DrawBorder();
-                            DrawInfo();
-                            DrawField();
-                            DrawCurrentFigure();
-                            File.AppendAllLines("HighscoresTetris.txt", new List<string>
-                            {
-                                $"[{DateTime.Now.ToLongTimeString()}] - {Environment.UserName} => {Score}"
-                            });
-                            var StringScore = Score.ToString();
-                            StringScore += new string(' ', 7 - StringScore.Length);
-                            Write("╔═════════╗", 5, 5);
-                            Write("║ Game    ║", 6, 5);
-                            Write("║   Over! ║", 7, 5);
-                            Write($"║ {StringScore} ║", 8, 5);
-                            Write("╚═════════╝", 9, 5);
+                            GameOver();
                             break;
                         }
                     }
@@ -189,6 +178,36 @@ namespace Tetris
                     return;
                 }
             }
+        }
+
+        private static void GameOver()
+        {
+            DrawBorder();
+            DrawInfo();
+            DrawField();
+            DrawCurrentFigure();
+            File.AppendAllLines("HighscoresTetris.txt", new List<string>
+            {
+             $"[{DateTime.Now.ToLongTimeString()}] - {Environment.UserName} => {Score}"
+            });
+            var StringScore = Score.ToString();
+            StringScore += new string(' ', 7 - StringScore.Length);
+            Write("╔═════════╗", 5, 5);
+            Write("║ Game    ║", 6, 5);
+            Write("║   Over! ║", 7, 5);
+            Write($"║ {StringScore} ║", 8, 5);
+            Write("╚═════════╝", 9, 5);
+        }
+
+        private static void UpdateLevel()
+        {
+            if (Score <= 9)
+            {
+                Level = 1;
+                return;
+            }
+
+            Level = (int)(Math.Log10(Score));
         }
 
         static void RotateCurrentFigure()
@@ -288,16 +307,14 @@ namespace Tetris
         {
             Write("Score:", 1, 3 + TetrisCols);
             Write(Score.ToString(), 2, 3 + TetrisCols);
-            Write("Frame:", 4, 3 + TetrisCols);
-            Write(Frames.ToString(), 5, 3 + TetrisCols);
-            Write("Position:", 7, 3 + TetrisCols);
-            Write(CurrentRow + "," + CurrentCol, 8, 3 + TetrisCols);
+            Write("Level:", 3, 3 + TetrisCols);
+            Write(Level.ToString(), 4, 3 + TetrisCols);
             if (Score > HighScore)
             {
                 HighScore = Score;
             }
-            Write("Best", 9, 3 + TetrisCols);
-            Write($"{HighScore}", 10, 3 + TetrisCols);
+            Write("Best", 5, 3 + TetrisCols);
+            Write($"{HighScore}", 6, 3 + TetrisCols);
         }
         static void DrawCurrentFigure()
         {
@@ -339,7 +356,7 @@ namespace Tetris
             {
                 return true;
             }
-            
+
             if (CurrentCol > TetrisCols - figure.GetLength(1))
             {
                 return true;
