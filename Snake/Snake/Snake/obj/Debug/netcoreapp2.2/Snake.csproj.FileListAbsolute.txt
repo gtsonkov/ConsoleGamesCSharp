@@ -1,0 +1,11 @@
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Snake\Snake\Snake\bin\Debug\netcoreapp2.2\Snake.deps.json
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Snake\Snake\Snake\bin\Debug\netcoreapp2.2\Snake.runtimeconfig.json
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Snake\Snake\Snake\bin\Debug\netcoreapp2.2\Snake.runtimeconfig.dev.json
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Snake\Snake\Snake\bin\Debug\netcoreapp2.2\Snake.dll
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Snake\Snake\Snake\bin\Debug\netcoreapp2.2\Snake.pdb
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Snake\Snake\Snake\obj\Debug\netcoreapp2.2\Snake.csprojAssemblyReference.cache
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Snake\Snake\Snake\obj\Debug\netcoreapp2.2\Snake.csproj.CoreCompileInputs.cache
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Snake\Snake\Snake\obj\Debug\netcoreapp2.2\Snake.AssemblyInfoInputs.cache
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Snake\Snake\Snake\obj\Debug\netcoreapp2.2\Snake.AssemblyInfo.cs
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Snake\Snake\Snake\obj\Debug\netcoreapp2.2\Snake.dll
+D:\SoftUni\OneDrive\C#\ConsoleGamesCSharp\Snake\Snake\Snake\obj\Debug\netcoreapp2.2\Snake.pdb
