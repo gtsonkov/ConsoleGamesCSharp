@@ -28,7 +28,6 @@ namespace Snake
             };
         static int speed = 200;
         
-
         static void Main(string[] args)
         {
             Console.BufferHeight = Console.WindowHeight;
@@ -65,8 +64,6 @@ namespace Snake
                         direction = 3;
                     }
                 }
-                
-                
                 Position CurrHeadPosition = SnakeElements.Last();
                 if (food.row == CurrHeadPosition.row && food.col == CurrHeadPosition.col)
                 {
@@ -80,7 +77,6 @@ namespace Snake
                     SnakeElements.Dequeue();
                     PrintSnake(SnakeElements);
                     PrintFood(food);
-
                 }
                 Thread.Sleep(speed);
             }
@@ -91,7 +87,6 @@ namespace Snake
             Position foodPos = new Position(RandomnumberGenerator.Next(0, Console.WindowHeight), RandomnumberGenerator.Next(0, Console.WindowWidth));
             return foodPos;
         }
-
         static void PrintFood(Position food)
         {
             Console.SetCursorPosition(food.col, food.row);
