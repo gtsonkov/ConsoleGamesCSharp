@@ -18,7 +18,7 @@ namespace Tetris
         static int BorederCols = 3;
         static int TetrisCols = 10;
         static int InfoCols = 10;
-        static long Level = 1;
+        static int Level = 1;
         static int ConsoleRows = HeaderRows + TetrisRows + FooterRows;
         static int ConsoleCols = BorederCols + TetrisCols + InfoCols;
         static int Frame = 40; // (1000/24)= 41,6666 = 40ms (25fps HumanEye)
@@ -151,7 +151,7 @@ namespace Tetris
                     {
                         AddCurrentFigureToField();
                         int lines = ChekForFullLines();
-                        Score += ScorePerLines[lines];
+                        Score += ((ScorePerLines[lines])*Level);
                         FigureIndex = GetRandomIndex();
                         CurrentFigure = TetrisFigures[FigureIndex];
                         CurrentRow = 0;
