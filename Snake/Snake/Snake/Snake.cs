@@ -8,6 +8,7 @@ namespace Snake
 
     class Snake
     {
+        static Random RandomnumberGenerator = new Random();
         struct Position
         {
             public int row;
@@ -26,17 +27,18 @@ namespace Snake
                 new Position(-1,0) // Move Up
             };
         static int speed = 200;
+        
 
         static void Main(string[] args)
         {
             Console.BufferHeight = Console.WindowHeight;
             int direction = 0; //0-Right, 1-Left, 2-Down, 3-Up
             Queue<Position> SnakeElements = new Queue<Position>();
+            Position food = GetFoodPosition();
             for (int i = 0; i < 5; i++)
             {
                 SnakeElements.Enqueue(new Position(0, i));
             }
-
             while (true)
             {
                 if (Console.KeyAvailable)
@@ -63,14 +65,42 @@ namespace Snake
                         direction = 3;
                     }
                 }
-                SnakeElements = MoveSnake(SnakeElements, direction);
-                PrintSnake(SnakeElements);
+                
+                
+                Position CurrHeadPosition = SnakeElements.Last();
+                if (food.row == CurrHeadPosition.row && food.col == CurrHeadPosition.col)
+                {
+                    SnakeElements = MoveSnake(SnakeElements, direction);
+                    PrintSnake(SnakeElements);
+                    food = GetFoodPosition();
+                }
+                else
+                {
+                    SnakeElements = MoveSnake(SnakeElements, direction);
+                    SnakeElements.Dequeue();
+                    PrintSnake(SnakeElements);
+                    PrintFood(food);
+
+                }
                 Thread.Sleep(speed);
             }
         }
+
+        static Position GetFoodPosition()
+        {
+            Position foodPos = new Position(RandomnumberGenerator.Next(0, Console.WindowHeight), RandomnumberGenerator.Next(0, Console.WindowWidth));
+            return foodPos;
+        }
+
+        static void PrintFood(Position food)
+        {
+            Console.SetCursorPosition(food.col, food.row);
+            Console.Write("@");
+            Console.CursorVisible = false;
+        }
+
         static Queue<Position> MoveSnake(Queue<Position> snakeElements, int direction)
         {
-            snakeElements.Dequeue();
             Position snakeHead = snakeElements.Last();
             Position NextDirection = positions[direction];
             Position SnakeHeadNewPosition = new Position(snakeHead.row + NextDirection.row, snakeHead.col + NextDirection.col);
