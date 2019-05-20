@@ -3,6 +3,7 @@
 namespace Snake
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     class Snake
     {
@@ -16,15 +17,15 @@ namespace Snake
                 this.col = col;
             }
         }
-        static void Main(string[] args)
-        {
-            Position[] positions = new Position[]
+        static Position[] positions = new Position[]
             {
                 new Position(0,1), // Move Right
                 new Position(0,-1), // Move Left
                 new Position(1,0), // Move Down
                 new Position(-1,0) // Move Up
             };
+        static void Main(string[] args)
+        {
             int direction = 0; //0-Right, 1-Left, 2-Down, 3-Up
             Queue<Position> SnakeElements = new Queue<Position>();
             for (int i = 0; i < 5; i++)
@@ -55,13 +56,28 @@ namespace Snake
                 {
                     direction = 3;
                 }
-
-                foreach (Position pos in SnakeElements)
-                {
-                    Console.SetCursorPosition(pos.col, pos.row);
-                    Console.Write("*");
-                }
+                SnakeElements = MoveSnake(SnakeElements, direction);
+                PrintSnake(SnakeElements);
             }
         }
+        static Queue<Position> MoveSnake(Queue<Position> snakeElements, int direction)
+        {
+            snakeElements.Dequeue();
+            Position snakeHead = snakeElements.Last();
+            Position NextDirection = positions[direction];
+            Position SnakeHeadNewPosition = new Position(snakeHead.row + NextDirection.row, snakeHead.col + NextDirection.col);
+            snakeElements.Enqueue(SnakeHeadNewPosition);
+            return snakeElements;
+        }
+        static void PrintSnake(Queue<Position> snakeElements)
+        {
+            Console.Clear();
+            foreach (var item in snakeElements)
+            {
+                Console.SetCursorPosition(item.col, item.row);
+                Console.Write("o");
+            }
+        }
+
     }
 }
