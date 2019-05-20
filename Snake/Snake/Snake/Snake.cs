@@ -4,6 +4,7 @@ namespace Snake
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
 
     class Snake
     {
@@ -24,8 +25,11 @@ namespace Snake
                 new Position(1,0), // Move Down
                 new Position(-1,0) // Move Up
             };
+        static int speed = 200;
+
         static void Main(string[] args)
         {
+            Console.BufferHeight = Console.WindowHeight;
             int direction = 0; //0-Right, 1-Left, 2-Down, 3-Up
             Queue<Position> SnakeElements = new Queue<Position>();
             for (int i = 0; i < 5; i++)
@@ -35,29 +39,33 @@ namespace Snake
 
             while (true)
             {
-                var Input = Console.ReadKey();
-                if (Input.Key == ConsoleKey.Escape)
+                if (Console.KeyAvailable)
                 {
-                    return;
-                }
-                else if (Input.Key == ConsoleKey.RightArrow )
-                {
-                    direction = 0;
-                }
-                else if (Input.Key == ConsoleKey.LeftArrow)
-                {
-                    direction = 1;
-                }
-                else if (Input.Key == ConsoleKey.DownArrow)
-                {
-                    direction = 2;
-                }
-                else if (Input.Key == ConsoleKey.UpArrow)
-                {
-                    direction = 3;
+                    var Input = Console.ReadKey();
+                    if (Input.Key == ConsoleKey.Escape)
+                    {
+                        return;
+                    }
+                    else if (Input.Key == ConsoleKey.RightArrow)
+                    {
+                        direction = 0;
+                    }
+                    else if (Input.Key == ConsoleKey.LeftArrow)
+                    {
+                        direction = 1;
+                    }
+                    else if (Input.Key == ConsoleKey.DownArrow)
+                    {
+                        direction = 2;
+                    }
+                    else if (Input.Key == ConsoleKey.UpArrow)
+                    {
+                        direction = 3;
+                    }
                 }
                 SnakeElements = MoveSnake(SnakeElements, direction);
                 PrintSnake(SnakeElements);
+                Thread.Sleep(speed);
             }
         }
         static Queue<Position> MoveSnake(Queue<Position> snakeElements, int direction)
