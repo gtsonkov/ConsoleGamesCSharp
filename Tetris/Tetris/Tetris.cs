@@ -63,7 +63,6 @@ namespace Tetris
                 {false,false,true}
             },
         };
-
         //State Info
         static int Score = 0;
         static int HighScore = 0;
@@ -73,7 +72,6 @@ namespace Tetris
         static bool[,] CurrentFigure = TetrisFigures[FigureIndex];
         static void Main(string[] args)
         {
-
             if (File.Exists("HighscoresTetris.txt"))
             {
                 var allScores = File.ReadAllLines("HighscoresTetris.txt");
@@ -138,7 +136,6 @@ namespace Tetris
                         Score++;
                     }
                 }
-
                 //Change Game State
                 if (Frames % (FramesToMove - Level) == 0)
                 {
@@ -206,7 +203,6 @@ namespace Tetris
                 Level = 1;
                 return;
             }
-
             Level = (int)(Math.Log10(Score));
         }
 
