@@ -97,7 +97,7 @@ namespace Snake
         {
             Console.SetCursorPosition(0, 0);
             Console.WriteLine("Game Over");
-            Console.WriteLine("Your points are {0}", (SnakeElements - 4) * 100);
+            Console.WriteLine("Your points are {0}", (SnakeElements - 5) * 100);
         }
 
         static Position GetFoodPosition()
@@ -122,6 +122,7 @@ namespace Snake
                 SnakeHeadNewPosition.row >= Console.WindowHeight ||
                 SnakeHeadNewPosition.col >= Console.BufferWidth)
             {
+                snakeElements.Enqueue(SnakeHeadNewPosition);
                 GameOver = true;
             }
             else
