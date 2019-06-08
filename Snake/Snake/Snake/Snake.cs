@@ -26,7 +26,7 @@ namespace Snake
                 new Position(1,0), // Move Down
                 new Position(-1,0) // Move Up
             };
-        static int speed = 200;
+        static int speed = 200; //Console Sleep Time 
         static bool GameOver = false;
 
         static void Main(string[] args)
@@ -50,19 +50,31 @@ namespace Snake
                     }
                     else if (Input.Key == ConsoleKey.RightArrow)
                     {
-                        direction = 0;
+                        if (!(direction == 1))
+                        {
+                            direction = 0;
+                        }
                     }
                     else if (Input.Key == ConsoleKey.LeftArrow)
                     {
-                        direction = 1;
+                        if (!(direction == 0))
+                        {
+                            direction = 1;
+                        }
                     }
                     else if (Input.Key == ConsoleKey.DownArrow)
                     {
-                        direction = 2;
+                        if (!(direction == 3))
+                        {
+                            direction = 2;
+                        }
                     }
                     else if (Input.Key == ConsoleKey.UpArrow)
                     {
-                        direction = 3;
+                        if (!(direction == 2))
+                        {
+                            direction = 3;
+                        }
                     }
                 }
                 Position CurrHeadPosition = SnakeElements.Last();
@@ -72,6 +84,14 @@ namespace Snake
                     if (GameOver)
                     {
                         BreakGeame(SnakeElements.Count);
+                        return;
+                    }
+                    speed -= 5;
+                    if (speed < 5)
+                    {
+                        Console.SetCursorPosition(0, 0);
+                        Console.WriteLine("You are Amazing!!!");
+                        Console.WriteLine("You score: {0}",SnakeElements.Count);
                         return;
                     }
                     PrintSnake(SnakeElements);
@@ -120,7 +140,8 @@ namespace Snake
             if (SnakeHeadNewPosition.row < 0 ||
                 SnakeHeadNewPosition.col < 0 ||
                 SnakeHeadNewPosition.row >= Console.WindowHeight ||
-                SnakeHeadNewPosition.col >= Console.BufferWidth)
+                SnakeHeadNewPosition.col >= Console.BufferWidth  ||
+                snakeElements.Contains(SnakeHeadNewPosition))
             {
                 snakeElements.Enqueue(SnakeHeadNewPosition);
                 GameOver = true;
