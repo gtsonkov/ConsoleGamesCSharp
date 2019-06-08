@@ -27,7 +27,8 @@ namespace Snake
                 new Position(-1,0) // Move Up
             };
         static int speed = 200;
-        
+        static bool GameOver = false;
+
         static void Main(string[] args)
         {
             Console.BufferHeight = Console.WindowHeight;
@@ -68,6 +69,15 @@ namespace Snake
                 if (food.row == CurrHeadPosition.row && food.col == CurrHeadPosition.col)
                 {
                     SnakeElements = MoveSnake(SnakeElements, direction);
+                    if (GameOver)
+                    {
+                        Console.SetCursorPosition(0, 0);
+                        for (int i = 0; i < 10; i++)
+                        {
+                            Console.WriteLine("Game Over");
+                        }
+                        return;
+                    }
                     PrintSnake(SnakeElements);
                     food = GetFoodPosition();
                 }
@@ -75,6 +85,13 @@ namespace Snake
                 {
                     SnakeElements = MoveSnake(SnakeElements, direction);
                     SnakeElements.Dequeue();
+                    if (GameOver)
+                    {
+                        Console.SetCursorPosition(0, 0);
+                        Console.WriteLine("Game Over");
+                        Console.WriteLine("Your points are {0}", (SnakeElements.Count - 4) * 100);
+                        return;
+                    }
                     PrintSnake(SnakeElements);
                     PrintFood(food);
                 }
@@ -99,9 +116,20 @@ namespace Snake
             Position snakeHead = snakeElements.Last();
             Position NextDirection = positions[direction];
             Position SnakeHeadNewPosition = new Position(snakeHead.row + NextDirection.row, snakeHead.col + NextDirection.col);
-            snakeElements.Enqueue(SnakeHeadNewPosition);
+            if (SnakeHeadNewPosition.row < 0 ||
+                SnakeHeadNewPosition.col < 0 ||
+                SnakeHeadNewPosition.row >= Console.WindowHeight ||
+                SnakeHeadNewPosition.col >= Console.BufferWidth)
+            {
+                GameOver = true;
+            }
+            else
+            {
+                snakeElements.Enqueue(SnakeHeadNewPosition);
+            }
             return snakeElements;
         }
+
         static void PrintSnake(Queue<Position> snakeElements)
         {
             Console.Clear();
@@ -111,6 +139,5 @@ namespace Snake
                 Console.Write("o");
             }
         }
-
     }
 }
