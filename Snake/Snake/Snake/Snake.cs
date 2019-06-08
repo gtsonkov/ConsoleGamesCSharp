@@ -71,11 +71,7 @@ namespace Snake
                     SnakeElements = MoveSnake(SnakeElements, direction);
                     if (GameOver)
                     {
-                        Console.SetCursorPosition(0, 0);
-                        for (int i = 0; i < 10; i++)
-                        {
-                            Console.WriteLine("Game Over");
-                        }
+                        BreakGeame(SnakeElements.Count);
                         return;
                     }
                     PrintSnake(SnakeElements);
@@ -87,9 +83,7 @@ namespace Snake
                     SnakeElements.Dequeue();
                     if (GameOver)
                     {
-                        Console.SetCursorPosition(0, 0);
-                        Console.WriteLine("Game Over");
-                        Console.WriteLine("Your points are {0}", (SnakeElements.Count - 4) * 100);
+                        BreakGeame(SnakeElements.Count);
                         return;
                     }
                     PrintSnake(SnakeElements);
@@ -97,6 +91,13 @@ namespace Snake
                 }
                 Thread.Sleep(speed);
             }
+        }
+
+        private static void BreakGeame(int SnakeElements)
+        {
+            Console.SetCursorPosition(0, 0);
+            Console.WriteLine("Game Over");
+            Console.WriteLine("Your points are {0}", (SnakeElements - 4) * 100);
         }
 
         static Position GetFoodPosition()
